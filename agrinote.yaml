@@ -27,18 +27,16 @@ tags:
 schemes:
   - http
 paths:
-  /pet:
+  /field:
     post:
       tags:
         - pet
-      summary: Add a new pet to the store
-      description: ''
-      operationId: addPet
+      summary: 新增一筆農田
+      description: 新增一筆農田記錄
+      operationId: addField
       consumes:
         - application/json
-        - application/xml
       produces:
-        - application/xml
         - application/json
       parameters:
         - in: body
@@ -62,9 +60,7 @@ paths:
       operationId: updatePet
       consumes:
         - application/json
-        - application/xml
       produces:
-        - application/xml
         - application/json
       parameters:
         - in: body
@@ -415,26 +411,25 @@ paths:
     get:
       tags:
         - user
-      summary: Logs user into the system
+      summary: 使用者系統登入
       description: ''
       operationId: loginUser
       produces:
-        - application/xml
         - application/json
       parameters:
         - name: username
           in: query
-          description: The user name for login
+          description: 登入的使用者名稱
           required: true
           type: string
         - name: password
           in: query
-          description: The password for login in clear text
+          description: 使用者登入密碼
           required: true
           type: string
       responses:
         '200':
-          description: successful operation
+          description: 成功登入
           schema:
             type: string
           headers:
@@ -447,16 +442,15 @@ paths:
               format: date-time
               description: date in UTC when token expires
         '400':
-          description: Invalid username/password supplied
+          description: 錯誤的帳號或密碼
   /user/logout:
     get:
       tags:
         - user
-      summary: Logs out current logged in user session
-      description: ''
+      summary: 登出目前的使用者Session
+      description: 登出現在登入狀態的使用者
       operationId: logoutUser
       produces:
-        - application/xml
         - application/json
       parameters: []
       responses:
