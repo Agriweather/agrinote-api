@@ -44,7 +44,7 @@ paths:
           description: Pet object that needs to be added to the store
           required: true
           schema:
-            $ref: '#/definitions/Pet'
+            $ref: '#/definitions/Field'
       responses:
         '405':
           description: Invalid input
@@ -540,6 +540,20 @@ securityDefinitions:
     name: api_key
     in: header
 definitions:
+  Field:
+    type: object
+    properties:
+      field_id:
+        type: integer
+        format: int64
+      user:
+        $ref: '#/definitions/User'
+      name:
+        type: string
+      lan_no:
+        type: string
+      address:
+        type: string
   Order:
     type: object
     properties:
