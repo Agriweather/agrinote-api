@@ -552,8 +552,150 @@ definitions:
         type: string
       lan_no:
         type: string
+        description: 地號
       address:
         type: string
+      longitude:
+        type: number
+        format: float
+        description: 經度
+      latitude:
+        type: number
+        format: float
+        description: 緯度
+      pic:
+        type: string
+        format: byte
+    required:
+      - name
+      - address
+      - longitude
+      - latitude
+  Period:
+    type: object
+    properties:
+      period_id:
+        type: integer
+        format: int64
+      field_id:
+        type: integer
+        format: int64
+        description: 農田編號
+      crop_id:
+        type: integer
+        format: int64
+        description: 農作物編號
+      start_date:
+        type: string
+        format: date
+        description: 開始日期
+      complete:
+        type: boolean
+        default: false
+        description: 期作完成與否，完成後不出現
+      pic:
+        type: string
+        format: byte
+        description: 農作物照片
+  Crop:
+    type: object
+    properties:
+      crop_id:
+        type: integer
+        format: int64
+      gs1_id:
+        type: integer
+        format: int32
+        description: 農產品編碼
+      category:
+        type: string
+        description: 作物別
+      item:
+        type: string
+        description: 品項
+      operate_mode:
+        type: string
+        description: 工作方式
+      breed:
+        type: string
+        description: 品種
+  Journal:
+    type: object
+    description: 日誌記錄
+    properties:
+      journal_id:
+        type: integer
+        format: int64
+      period_id:
+        type: integer
+        format: int64
+        description: 期作編號
+      record_time:
+        type: string
+        format: date-time
+        description: 記錄時間
+      category:
+        type: integer
+        format: int32
+        description: 記錄類別
+      task_id:
+        type: integer
+        format: int64
+        description: 工作項目
+      amount:
+        type: integer
+        format: int32
+        description: 數量
+      unit:
+        type: string
+        description: 單位
+      material_id:
+        type: integer
+        format: int64
+        description: 資材編號
+      work_time:
+        type: integer
+        format: int32
+        description: 工時
+      cost:
+        type: integer
+        format: int32
+        description: 成本
+      pic:
+        type: string
+        format: byte
+        description: 記錄照片
+  Task:
+    type: object
+    description: 工作項目
+    properties:
+      task_id:
+        type: integer
+        format: int64
+      task_name:
+        type: string
+        description: 工作項目
+      task_description:
+        type: string
+        description: 工作項目說明
+      parent_task_id:
+        type: integer
+        format: int64
+        description: 工作父項目
+  Material:
+    type: object
+    description: 使用資材
+    properties:
+      material_id:
+        type: integer
+        format: int64
+      material_type:
+        type: integer
+        format: int32
+        description: '資材類別 (1:有機 2:化學 3:其他)'
+      name:
+        type: string
+        description: 資材名稱
   Order:
     type: object
     properties:
