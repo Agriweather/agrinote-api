@@ -401,6 +401,10 @@ paths:
             type: array
             items:
               $ref: '#/definitions/User'
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
     post:
       tags:
         - user
@@ -417,7 +421,7 @@ paths:
           schema:
             $ref: '#/definitions/Register'
       responses:
-        default:
+        '201':
           description: 註冊成功
   /users/login:
     get:
@@ -468,19 +472,18 @@ paths:
       responses:
         default:
           description: successful operation
-  '/users/{username}':
+  '/users/{email}':
     get:
       tags:
         - user
       summary: 取得某位使用者資訊
-      description: 取得指定使用者名稱的資訊內容
-      operationId: getUserByName
+      description: 取得指定使用者的電子郵件信箱的資訊內容
       produces:
         - application/json
       parameters:
-        - name: username
+        - name: email
           in: path
-          description: 查詢使用者名稱
+          description: 使用者的電子郵件信箱
           required: true
           type: string
       responses:
@@ -489,21 +492,22 @@ paths:
           schema:
             $ref: '#/definitions/User'
         '400':
-          description: 提供使用者名稱無效
+          description: 提供使用者電子郵件信箱無效
+          schema:
+            $ref: '#/definitions/Error'
         '404':
-          description: 找不到使用者
+          $ref: '#/responses/NotFound'
     put:
       tags:
         - user
       summary: 更新使用者資訊
-      description: 只有登入的使用者能夠修改自己的資料
-      operationId: updateUser
+      description: 更新指定電子郵件使用者資訊（只有登入的使用者能夠修改自己的資料）
       produces:
         - application/json
       parameters:
-        - name: username
+        - name: email
           in: path
-          description: 要修改的使用者帳號名稱
+          description: 要修改的使用者電子郵件信箱
           required: true
           type: string
         - in: body
@@ -515,27 +519,30 @@ paths:
       responses:
         '400':
           description: 提供使用者名稱無效
+          schema:
+            $ref: '#/definitions/Error'
         '404':
-          description: 找不到使用者
+          $ref: '#/responses/NotFound'
     delete:
       tags:
         - user
       summary: 刪除使用者
-      description: 只有登入的使用者及能夠修改自己的資料
-      operationId: deleteUser
+      description: 刪除指定電子郵件使用者（系統不會真的刪除使用者，把使用者狀態改為`false`）
       produces:
         - application/json
       parameters:
-        - name: username
+        - name: email
           in: path
-          description: 要刪除的使用者帳號名稱
+          description: 要刪除的使用者電子郵件信箱
           required: true
           type: string
       responses:
         '400':
           description: 提供使用者名稱無效
+          schema:
+            $ref: '#/definitions/Error'
         '404':
-          description: 找不到使用者
+          $ref: '#/responses/NotFound'
 securityDefinitions:
   petstore_auth:
     type: oauth2
@@ -548,6 +555,11 @@ securityDefinitions:
     type: apiKey
     name: api_key
     in: header
+responses:
+  NotFound:
+    description: 未找到指的資源
+    schema:
+      $ref: '#/definitions/Error'
 definitions:
   Field:
     type: object
@@ -833,8 +845,13 @@ definitions:
           - available
           - pending
           - sold
-    xml:
-      name: Pet
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
   ApiResponse:
     type: object
     properties:
