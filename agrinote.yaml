@@ -518,7 +518,7 @@ paths:
             $ref: '#/definitions/User'
       responses:
         '400':
-          description: 提供使用者名稱無效
+          description: 提供使用者電子郵件無效
           schema:
             $ref: '#/definitions/Error'
         '404':
@@ -539,6 +539,40 @@ paths:
       responses:
         '400':
           description: 提供使用者名稱無效
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          $ref: '#/responses/NotFound'
+  '/users/{email}/password':
+    put:
+      tags:
+        - user
+      summary: 更新密碼
+      description: 更新指定email的使用者密碼
+      produces:
+        - application/json
+      parameters:
+        - name: email
+          in: path
+          description: 要修改的使用者電子郵件信箱
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: 修改後的密碼
+          schema:
+            required:
+              - password
+            properties:
+              password:
+                type: string
+                format: password
+                minLength: 6
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: 提供使用者電子郵件無效
           schema:
             $ref: '#/definitions/Error'
         '404':
