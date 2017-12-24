@@ -19,6 +19,10 @@ tags:
       url: 'http://swagger.io'
   - name: store
     description: Access to Petstore orders
+  - name: field
+    description: 農田操作（**完成**）
+  - name: period
+    description: 期作
   - name: user
     description: 使用者帳號相關操作（**完成**）
     externalDocs:
@@ -27,48 +31,137 @@ tags:
 schemes:
   - http
 paths:
-  /field:
+  /fields:
     post:
       tags:
-        - pet
+        - field
       summary: 新增一筆農田
       description: 新增一筆農田記錄
-      operationId: addField
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - in: body
-          name: body
-          description: Pet object that needs to be added to the store
-          required: true
+        - name: field
+          in: body
+          description: 農田資訊
           schema:
-            $ref: '#/definitions/Field'
+            properties:
+              user_id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              lan_no:
+                type: string
+                description: 地號
+              address:
+                type: string
+              longitude:
+                type: number
+                format: float
+                description: 經度
+              latitude:
+                type: number
+                format: float
+                description: 緯度
+              pic:
+                type: string
+                format: byte
+            required:
+              - user_id
+              - name
+              - address
+              - longitude
+              - latitude
       responses:
+        '201':
+          description: 新增農田成功
         '405':
-          description: Invalid input
+          description: 無效的輸入
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
       security:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
+    get:
+      tags:
+        - field
+      summary: 取得農田列表
+      description: 依照使用者ID取得農田列表
+      parameters:
+        - name: pageSize
+          in: query
+          description: 每一頁要傳回的使用者數量
+          type: integer
+        - name: pageNumber
+          in: query
+          description: 頁數
+          type: integer
+        - name: userId
+          in: query
+          description: 使用者編號
+          type: integer
+      responses:
+        '200':
+          description: 農田列表
+          schema:
+            $ref: '#/definitions/Fields'
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+  '/fields/{fieldId}':
+    get:
+      tags:
+        - field
+      summary: 取得指定農田資訊
+      description: 回傳指定農田編號的農田資訊
+      produces:
+        - application/json
+      parameters:
+        - name: fieldId
+          in: path
+          description: 農田編號
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: 成功
+          schema:
+            $ref: '#/definitions/Field'
+        '400':
+          description: 無效的農田編號
+        '404':
+          description: 查無農田
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
     put:
       tags:
-        - pet
-      summary: Update an existing pet
-      description: ''
+        - field
+      summary: 更新農田資料
+      description: 更新指定農田資料
       operationId: updatePet
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - in: body
-          name: body
-          description: Pet object that needs to be added to the store
+        - name: fieldId
+          in: path
+          description: 農田編號
           required: true
+          type: integer
+        - name: field
+          in: body
+          description: 更新農田使用的物件
           schema:
-            $ref: '#/definitions/Pet'
+            $ref: '#/definitions/Field'
       responses:
         '400':
           description: Invalid ID supplied
@@ -76,10 +169,62 @@ paths:
           description: Pet not found
         '405':
           description: Validation exception
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - field
+      summary: 刪除農田
+      description: 刪除制動農田資料
+      produces:
+        - application/json
+      parameters:
+        - name: fieldId
+          in: path
+          description: 農田編號
+          required: true
+          type: integer
+      responses:
+        '204':
+          description: 刪除農田成功
+        '400':
+          description: 提供農田編號無效
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          $ref: '#/responses/NotFound'
+  '/fields/{fieldId}/period':
+    post:
+      tags:
+        - period
+      summary: 新增農田期作
+      description: 新增一筆指定農田的期作記錄
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: fieldId
+          in: path
+          description: 農田編號
+          required: true
+          type: integer
+        - name: period
+          in: body
+          description: 新增期作需要的物件
+          schema:
+            $ref: '#/definitions/Period'
+      responses:
+        '200':
+          description: 農田列表
+          schema:
+            $ref: '#/definitions/Periods'
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
   /pet/findByStatus:
     get:
       tags:
@@ -596,13 +741,10 @@ responses:
       $ref: '#/definitions/Error'
 definitions:
   Field:
-    type: object
     properties:
-      field_id:
+      userId:
         type: integer
         format: int64
-      user:
-        $ref: '#/definitions/User'
       name:
         type: string
       lan_no:
@@ -618,14 +760,16 @@ definitions:
         type: number
         format: float
         description: 緯度
-      pic:
-        type: string
-        format: byte
     required:
+      - userId
       - name
       - address
       - longitude
       - latitude
+  Fields:
+    type: array
+    items:
+      $ref: '#/definitions/Field'
   Period:
     type: object
     properties:
@@ -652,6 +796,10 @@ definitions:
         type: string
         format: byte
         description: 農作物照片
+  Periods:
+    type: array
+    items:
+      $ref: '#/definitions/Period'
   Crop:
     type: object
     properties:
