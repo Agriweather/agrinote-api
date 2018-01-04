@@ -22,7 +22,7 @@ tags:
   - name: field
     description: 農田操作（**完成**）
   - name: period
-    description: 期作
+    description: 期作（**完成**）
   - name: user
     description: 使用者帳號相關操作（**完成**）
 schemes:
@@ -145,7 +145,7 @@ paths:
       tags:
         - period
       summary: 取得農田期作
-      description: 取得指定農田編號的所有期作資料
+      description: 取得指定農田編號的所有狀態仍在工作中期作資料
       produces:
         - application/json
       parameters:
@@ -850,6 +850,8 @@ definitions:
       period_id:
         type: integer
         format: int64
+      name:
+        type: string
       field_id:
         type: integer
         format: int64
@@ -870,6 +872,12 @@ definitions:
         type: string
         format: byte
         description: 農作物照片
+    required:
+      - name
+      - field_id
+      - crop_id
+      - start_date
+      - complete
   Periods:
     type: array
     items:
