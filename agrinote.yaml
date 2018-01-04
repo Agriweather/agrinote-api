@@ -13,107 +13,21 @@ host: api.agrinote.beehivedt.com
 basePath: /v1
 tags:
   - name: pet
-    description: Everything about your Pets
+    description: 不要理會這段，為了參考留著的項目
     externalDocs:
       description: Find out more
       url: 'http://swagger.io'
   - name: store
-    description: Access to Petstore orders
+    description: 不要理會這段，為了參考留著的項目
   - name: field
     description: 農田操作（**完成**）
   - name: period
-    description: 期作
+    description: 期作（**完成**）
   - name: user
     description: 使用者帳號相關操作（**完成**）
-    externalDocs:
-      description: Find out more about our store
-      url: 'http://swagger.io'
 schemes:
   - http
 paths:
-  /fields:
-    post:
-      tags:
-        - field
-      summary: 新增一筆農田
-      description: 新增一筆農田記錄
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: field
-          in: body
-          description: 農田資訊
-          schema:
-            properties:
-              user_id:
-                type: integer
-                format: int64
-              name:
-                type: string
-              lan_no:
-                type: string
-                description: 地號
-              address:
-                type: string
-              longitude:
-                type: number
-                format: float
-                description: 經度
-              latitude:
-                type: number
-                format: float
-                description: 緯度
-              pic:
-                type: string
-                format: byte
-            required:
-              - user_id
-              - name
-              - address
-              - longitude
-              - latitude
-      responses:
-        '201':
-          description: 新增農田成功
-        '405':
-          description: 無效的輸入
-        '500':
-          description: 發生非預期的錯誤
-          schema:
-            $ref: '#/definitions/Error'
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-    get:
-      tags:
-        - field
-      summary: 取得農田列表
-      description: 依照使用者ID取得農田列表
-      parameters:
-        - name: pageSize
-          in: query
-          description: 每一頁要傳回的使用者數量
-          type: integer
-        - name: pageNumber
-          in: query
-          description: 頁數
-          type: integer
-        - name: userId
-          in: query
-          description: 使用者編號
-          type: integer
-      responses:
-        '200':
-          description: 農田列表
-          schema:
-            $ref: '#/definitions/Fields'
-        '500':
-          description: 發生非預期的錯誤
-          schema:
-            $ref: '#/definitions/Error'
   '/fields/{fieldId}':
     get:
       tags:
@@ -163,6 +77,8 @@ paths:
           schema:
             $ref: '#/definitions/Field'
       responses:
+        '201':
+          description: 更新農田成功
         '400':
           description: Invalid ID supplied
         '404':
@@ -195,7 +111,7 @@ paths:
             $ref: '#/definitions/Error'
         '404':
           $ref: '#/responses/NotFound'
-  '/fields/{fieldId}/period':
+  '/fields/{fieldId}/periods':
     post:
       tags:
         - period
@@ -217,10 +133,116 @@ paths:
           schema:
             $ref: '#/definitions/Period'
       responses:
+        '201':
+          description: 新增期作成功
+        '405':
+          description: 無效的輸入
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      tags:
+        - period
+      summary: 取得農田期作
+      description: 取得指定農田編號的所有狀態仍在工作中期作資料
+      produces:
+        - application/json
+      parameters:
+        - name: fieldId
+          in: path
+          description: 農田編號
+          required: true
+          type: integer
+      responses:
         '200':
           description: 農田列表
           schema:
             $ref: '#/definitions/Periods'
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+  '/periods/{periodId}':
+    get:
+      tags:
+        - period
+      summary: 取得指定期作資訊
+      description: 回傳指定期作編號的期作資訊
+      produces:
+        - application/json
+      parameters:
+        - name: periodId
+          in: path
+          description: 期作編號
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: 成功
+          schema:
+            $ref: '#/definitions/Period'
+        '400':
+          description: 無效的期作編號
+        '404':
+          description: 查無期作
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - period
+      summary: 更新期作資料
+      description: 更新指定編號的期作資料
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: periodId
+          in: path
+          description: 期作編號
+          required: true
+          type: integer
+        - name: field
+          in: body
+          description: 更新期作使用的物件
+          schema:
+            $ref: '#/definitions/Period'
+      responses:
+        '201':
+          description: 更新期作成功
+        '400':
+          description: 無效的期作編號
+        '404':
+          description: 查無期作
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - period
+      summary: 刪除期作資料
+      description: 刪除指定編號期作資料
+      produces:
+        - application/json
+      parameters:
+        - name: periodId
+          in: path
+          description: 期作編號
+          required: true
+          type: integer
+      responses:
+        '204':
+          description: 刪除期作成功
+        '400':
+          description: 提供期作編號無效
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          $ref: '#/responses/NotFound'
         '500':
           description: 發生非預期的錯誤
           schema:
@@ -722,6 +744,58 @@ paths:
             $ref: '#/definitions/Error'
         '404':
           $ref: '#/responses/NotFound'
+  '/users/{userId}/fields':
+    get:
+      tags:
+        - field
+      summary: 取得使用者農田
+      description: 取得指定使用者編號的農田資料
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: 使用者編號
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: 農田列表
+          schema:
+            $ref: '#/definitions/Fields'
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      tags:
+        - field
+      summary: 新增一筆農田
+      description: 新增指定使用者一筆農田記錄
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: 使用者編號
+          required: true
+          type: integer
+        - name: field
+          in: body
+          description: 新增農田需要的物件資料
+          schema:
+            $ref: '#/definitions/Field'
+      responses:
+        '201':
+          description: 新增農田成功
+        '405':
+          description: 無效的輸入
+        '500':
+          description: 發生非預期的錯誤
+          schema:
+            $ref: '#/definitions/Error'
 securityDefinitions:
   petstore_auth:
     type: oauth2
@@ -776,6 +850,8 @@ definitions:
       period_id:
         type: integer
         format: int64
+      name:
+        type: string
       field_id:
         type: integer
         format: int64
@@ -796,6 +872,12 @@ definitions:
         type: string
         format: byte
         description: 農作物照片
+    required:
+      - name
+      - field_id
+      - crop_id
+      - start_date
+      - complete
   Periods:
     type: array
     items:
