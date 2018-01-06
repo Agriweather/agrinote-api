@@ -9,8 +9,8 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: api.agrinote.beehivedt.com
-basePath: /v1
+host: 'agriweather.westus2.cloudapp.azure.com:8080'
+basePath: /agrinote
 tags:
   - name: pet
     description: 不要理會這段，為了參考留著的項目
