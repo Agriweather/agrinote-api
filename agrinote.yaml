@@ -1019,6 +1019,26 @@ definitions:
     xml:
       name: Category
   Register:
+    allOf:
+      - $ref: '#/definitions/BaseUser'
+      - type: object
+        properties:
+          password:
+            type: string
+            description: 帳號長度需要大於六個
+        required:
+          - password
+  User:
+    allOf:
+      - $ref: '#/definitions/BaseUser'
+      - type: object
+        properties:
+          userId:
+            type: integer
+            format: int64
+        required:
+          - userId
+  BaseUser:
     type: object
     properties:
       firstName:
@@ -1028,31 +1048,41 @@ definitions:
       email:
         type: string
         description: 做為帳號使用（唯一）
-      password:
+      nickName:
         type: string
-        description: 帳號長度需要大於六個
+      phone:
+        type: string
+        description: 電話號碼
+      vipCode:
+        type: string
+        description: 邀請碼
+      fbId:
+        type: integer
+        description: Facebook ID
+      fbToken:
+        type: string
+        description: Facebook Token
+      gpId:
+        type: integer
+        description: Google Plus ID
+      gpToken:
+        type: string
+        description: Google Plus Token
+      lineId:
+        type: string
+        description: Line ID
+      lineToken:
+        type: string
+        description: Line Token
+      twitterId:
+        type: integer
+        description: Twitter ID
+      twitterToken:
+        type: string
+        description: Twitter Token
       pic:
         type: string
         description: 儲存檔案路徑
-    required:
-      - firstName
-      - lastName
-      - email
-      - password
-  User:
-    type: object
-    properties:
-      userId:
-        type: integer
-        format: int64
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      pic:
-        type: string
       userStatus:
         type: integer
         format: int32
@@ -1105,8 +1135,6 @@ definitions:
   Error:
     type: object
     properties:
-      code:
-        type: string
       message:
         type: string
   ApiResponse:
